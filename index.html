@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThalaLink - AI-Powered Thalassemia Care & Blood Donation</title>
+    <meta name="description" content="ThalaLink's BloodBridge Bot connects Thalassemia patients and blood donors in real-time via WhatsApp. AI-powered matching, automated scheduling, and community support.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500&family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-red': '#E10600',
+                        'trust-blue': '#005EB8',
+                        'accent-amber': '#FFC107',
+                        'support-teal': '#00AFAE',
+                        'neutral-light': '#F5F5F5',
+                        'neutral-dark': '#1F2937',
+                        'soft-blue': '#F0F9FF',
+                        'warm-gray': '#FAFAF9'
+                    },
+                    fontFamily: {
+                        'body': ['Inter', 'sans-serif'],
+                        'heading': ['Montserrat', 'sans-serif'],
+                        'mono': ['Inconsolata', 'monospace']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 2s infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
+                        'slide-in-left': 'slideInLeft 0.8s ease-out forwards',
+                        'slide-in-right': 'slideInRight 0.8s ease-out forwards',
+                        'scale-in': 'scaleIn 0.6s ease-out forwards',
+                        'shimmer': 'shimmer 3s ease-in-out infinite',
+                        'bounce-gentle': 'bounceGentle 2s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'typewriter': 'typewriter 3s steps(40) 1s forwards'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' }
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 5px rgba(225, 6, 0, 0.5), 0 0 10px rgba(225, 6, 0, 0.3)' },
+                            '100%': { boxShadow: '0 0 20px rgba(225, 6, 0, 0.8), 0 0 30px rgba(225, 6, 0, 0.4)' }
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideInLeft: {
+                            '0%': { opacity: '0', transform: 'translateX(-40px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' }
+                        },
+                        slideInRight: {
+                            '0%': { opacity: '0', transform: 'translateX(40px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' }
+                        },
+                        scaleIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.8)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' }
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% 0' },
+                            '100%': { backgroundPosition: '200% 0' }
+                        },
+                        bounceGentle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-8px)' }
+                        },
+                        typewriter: {
+                            '0%': { width: '0' },
+                            '100%': { width: '100%' }
+                        }
+                    },
+                    backdropBlur: {
+                        'xs': '2px'
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(225, 6, 0, 0.3)',
+                        'glow-blue': '0 0 20px rgba(0, 94, 184, 0.3)',
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+                        'medium': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'large': '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+                        'premium': '0 32px 64px -12px rgba(0, 0, 0, 0.2)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Premium animations and effects */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.2s; }
+        .stagger-3 { transition-delay: 0.3s; }
+        .stagger-4 { transition-delay: 0.4s; }
+        .stagger-5 { transition-delay: 0.5s; }
+        .stagger-6 { transition-delay: 0.6s; }
+
+        /* Advanced glass morphism */
+        .glass-ultra {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Hero background with parallax */
+        .hero-bg {
+            background: 
+                linear-gradient(135deg, 
+                    rgba(225, 6, 0, 0.8) 0%, 
+                    rgba(0, 94, 184, 0.6) 50%, 
+                    rgba(225, 6, 0, 0.8) 100%
+                ),
+                url('https://images.unsplash.com/photo-1631815589968-fdb09a223b1e?q=80&w=2070&auto=format&fit=crop') center/cover;
+            background-attachment: fixed;
+        }
+
+        /* Advanced hover effects */
+        .hover-lift-premium {
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .hover-lift-premium:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Gradient text with shimmer */
+        .gradient-text-animated {
+            background: linear-gradient(
+                90deg,
+                #E10600 0%,
+                #FFC107 25%,
+                #005EB8 50%,
+                #00AFAE 75%,
+                #E10600 100%
+            );
+            background-size: 400% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #E10600, #005EB8);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #c00500, #004b9a);
+        }
+
+        /* Skip to content link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #000;
+            color: #fff;
+            padding: 8px;
+            text-decoration: none;
+            z-index: 1000;
+            transition: top 0.3s;
+            border-radius: 4px;
+        }
+        
+        .skip-link:focus {
+            top: 6px;
+        }
+
+        /* Particle animation background */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        /* Magnetic button effect */
+        .btn-magnetic {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-magnetic::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-magnetic:hover::before {
+            left: 100%;
+        }
+
+        /* Advanced card interactions */
+        .card-interactive {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card-interactive:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Typing effect */
+        .typing-text {
+            border-right: 2px solid #E10600;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        /* Floating elements */
+        .float-element {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .float-element:nth-child(2n) {
+            animation-delay: -2s;
+        }
+
+        .float-element:nth-child(3n) {
+            animation-delay: -4s;
+        }
+
+        /* Glowing borders */
+        .glow-border {
+            position: relative;
+        }
+        
+        .glow-border::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, #E10600, #005EB8, #00AFAE, #FFC107);
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+        
+        .glow-border:hover::before {
+            opacity: 1;
+        }
+
+        /* Premium text shadows */
+        .text-shadow-premium {
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Loading shimmer effect */
+        .shimmer-bg {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+    </style>
+</head>
+<body class="font-body text-neutral-dark overflow-x-hidden">
+    <div id="app">
+        <!-- Skip to content link for accessibility -->
+        <a href="#main-content" class="skip-link">Skip to main content</a>
+
+        <!-- Navigation -->
+        <navbar-component 
+            :is-scrolled="isScrolled"
+            @navigate="scrollToSection">
+        </navbar-component>
+
+        <!-- Hero Section -->
+        <hero-component></hero-component>
+
+        <main id="main-content">
+            <!-- Problem Section -->
+            <problem-section></problem-section>
+
+            <!-- Solution Section -->
+            <solution-section></solution-section>
+
+            <!-- Features Section -->
+            <features-section></features-section>
+
+            <!-- Pitch Deck Section -->
+            <pitch-deck-section></pitch-deck-section>
+
+            <!-- Team Section -->
+            <team-section></team-section>
+
+            <!-- FAQ Section -->
+            <faq-section></faq-section>
+        </main>
+
+        <!-- Footer -->
+        <footer-component></footer-component>
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted, nextTick } = Vue;
+
+        // Navbar Component
+        const NavbarComponent = {
+            props: ['isScrolled'],
+            emits: ['navigate'],
+            template: `
+                <nav 
+                    :class="[
+                        'fixed top-0 w-full z-50 transition-all duration-500',
+                        isScrolled 
+                            ? 'glass-ultra shadow-premium' 
+                            : 'bg-transparent'
+                    ]"
+                    role="navigation"
+                    aria-label="Main navigation"
+                >
+                    <div class="container mx-auto px-6 lg:px-12">
+                        <div class="flex items-center justify-between h-20">
+                            <a 
+                                href="#home" 
+                                class="text-3xl font-heading font-black text-primary-red hover:scale-110 transition-all duration-300 glow-border"
+                                @click.prevent="$emit('navigate', 'home')"
+                            >
+                                ThalaLink
+                            </a>
+                            
+                            <!-- Desktop Menu -->
+                            <div class="hidden lg:flex space-x-12">
+                                <a 
+                                    v-for="item in navItems" 
+                                    :key="item.id"
+                                    :href="'#' + item.id" 
+                                    class="relative text-gray-800 hover:text-primary-red transition-all duration-300 font-semibold text-lg group"
+                                    @click.prevent="$emit('navigate', item.id)"
+                                >
+                                    {{ item.label }}
+                                    <span class="absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-primary-red to-trust-blue transition-all duration-300 group-hover:w-full"></span>
+                                </a>
+                            </div>
+
+                            <!-- Mobile Menu Button -->
+                            <button 
+                                @click="toggleMobileMenu"
+                                class="lg:hidden p-3 rounded-xl hover:bg-white/20 transition-all duration-300 glass-card"
+                                :aria-expanded="mobileMenuOpen"
+                                aria-controls="mobile-menu"
+                                aria-label="Toggle navigation menu"
+                            >
+                                <i :class="mobileMenuOpen ? 'bi-x-lg' : 'bi-list'" class="text-2xl"></i>
+                            </button>
+                        </div>
+
+                        <!-- Mobile Menu -->
+                        <div 
+                            v-show="mobileMenuOpen"
+                            id="mobile-menu"
+                            class="lg:hidden py-6 glass-ultra rounded-xl mt-4 transform transition-all duration-300"
+                            :class="mobileMenuOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'"
+                        >
+                            <a 
+                                v-for="item in navItems" 
+                                :key="item.id"
+                                :href="'#' + item.id" 
+                                class="block py-3 px-6 text-gray-800 hover:text-primary-red hover:bg-white/10 transition-all duration-300 font-semibold"
+                                @click.prevent="handleMobileNavClick(item.id)"
+                            >
+                                {{ item.label }}
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+            `,
+            setup(props, { emit }) {
+                const mobileMenuOpen = ref(false);
+                const navItems = [
+                    { id: 'problem', label: 'The Problem' },
+                    { id: 'solution', label: 'Our Solution' },
+                    { id: 'features', label: 'Features' },
+                    { id: 'pitch-deck', label: 'Pitch Deck' },
+                    { id: 'team', label: 'Team' },
+                    { id: 'contact', label: 'Contact' }
+                ];
+
+                const toggleMobileMenu = () => {
+                    mobileMenuOpen.value = !mobileMenuOpen.value;
+                };
+
+                const handleMobileNavClick = (sectionId) => {
+                    emit('navigate', sectionId);
+                    mobileMenuOpen.value = false;
+                };
+
+                return {
+                    mobileMenuOpen,
+                    navItems,
+                    toggleMobileMenu,
+                    handleMobileNavClick
+                };
+            }
+        };
+
+        // Hero Component
+        const HeroComponent = {
+            template: `
+                <header class="hero-bg min-h-screen flex items-center justify-center text-center text-white relative overflow-hidden">
+                    <!-- Animated particles background -->
+                    <div class="particles">
+                        <div v-for="i in 50" :key="i" 
+                             class="particle float-element"
+                             :style="{
+                                 left: Math.random() * 100 + '%',
+                                 top: Math.random() * 100 + '%',
+                                 animationDelay: Math.random() * 8 + 's'
+                             }">
+                        </div>
+                    </div>
+                    
+                    <div class="relative z-10 max-w-6xl mx-auto px-6">
+                        <div class="glass-ultra rounded-3xl p-12 lg:p-20 reveal active">
+                            <h1 class="text-6xl md:text-8xl lg:text-9xl font-heading font-black mb-8 leading-tight">
+                                <span class="block text-shadow-premium">Closing The</span>
+                                <span class="block gradient-text-animated typing-text">
+                                    Care Gaps
+                                </span>
+                            </h1>
+                            <p class="text-2xl md:text-3xl lg:text-4xl mb-12 max-w-4xl mx-auto leading-relaxed font-light text-shadow-premium">
+                                A <span class="font-bold text-accent-amber">lifeline</span> for patients and a <span class="font-bold text-support-teal">platform</span> for heroes. 
+                                Our AI-driven chatbot connects blood donors and Thalassemia patients in real time-no apps, no hassle.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                                <button 
+                                    @click="scrollToSection('solution')"
+                                    class="bg-gradient-to-r from-primary-red to-red-600 hover:from-red-600 hover:to-red-700 text-white px-12 py-6 text-xl font-bold rounded-2xl hover-lift-premium btn-magnetic animate-bounce-gentle inline-flex items-center space-x-3 shadow-glow"
+                                >
+                                    <span>Discover BloodBridge Bot</span>
+                                    <i class="bi bi-arrow-down text-2xl"></i>
+                                </button>
+                                <button 
+                                    @click="scrollToSection('pitch-deck')"
+                                    class="glass-ultra border-2 border-white/30 text-white hover:bg-white/20 px-12 py-6 text-xl font-bold rounded-2xl hover-lift-premium transition-all duration-300 inline-flex items-center space-x-3"
+                                >
+                                    <span>View Pitch Deck</span>
+                                    <i class="bi bi-play-circle text-2xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+            `,
+            setup() {
+                const scrollToSection = (sectionId) => {
+                    document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+                };
+
+                return { scrollToSection };
+            }
+        };
+
+        // Problem Section Component
+        const ProblemSection = {
+            template: `
+                <section id="problem" class="py-32 lg:py-40 bg-gradient-to-br from-soft-blue via-white to-warm-gray">
+                    <div class="container mx-auto px-6 lg:px-12">
+                        <div class="grid lg:grid-cols-2 gap-20 items-center">
+                            <div class="reveal">
+                                <div class="inline-block bg-gradient-to-r from-trust-blue to-blue-600 text-white px-6 py-3 rounded-full text-sm font-bold mb-8">
+                                    THE CHALLENGE
+                                </div>
+                                <h2 class="text-5xl md:text-7xl font-heading font-black text-trust-blue mb-8 leading-tight">
+                                    The Silent 
+                                    <span class="text-primary-red">Struggle</span>
+                                </h2>
+                                <p class="text-2xl mb-12 leading-relaxed text-gray-700 font-light">
+                                    Thalassemia patients and donors struggle to connect in real time, manage schedules, and stay informed—all without downloading niche apps or wrestling with clunky portals. 
+                                    <span class="font-semibold text-primary-red">Awareness gaps only compound the urgency</span>, leaving many children without reliable support.
+                                </p>
+                                <div class="space-y-8">
+                                    <div v-for="(item, index) in problemPoints" :key="index" 
+                                         :class="'flex items-start space-x-6 p-6 bg-white/60 backdrop-blur-sm rounded-2xl hover:bg-white/80 transition-all duration-300 reveal stagger-' + (index + 1)">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-primary-red to-red-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                            <i class="bi bi-x-circle-fill text-white text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-heading font-bold text-2xl mb-3 text-neutral-dark">{{ item.title }}</h3>
+                                            <p class="text-gray-600 text-lg leading-relaxed">{{ item.description }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 gap-8">
+                                <div class="grid grid-cols-2 gap-6">
+                                    <div class="text-center p-8 bg-gradient-to-br from-primary-red via-red-500 to-red-600 text-white rounded-3xl hover-lift-premium reveal stagger-1 card-interactive">
+                                        <div class="text-6xl font-heading font-black mb-4 animate-pulse-slow">100K+</div>
+                                        <p class="font-bold text-lg">Thalassemia Patients in India</p>
+                                    </div>
+                                    <div class="text-center p-8 bg-gradient-to-br from-trust-blue via-blue-500 to-blue-600 text-white rounded-3xl hover-lift-premium reveal stagger-2 card-interactive">
+                                        <div class="text-6xl font-heading font-black mb-4 animate-pulse-slow">80%+</div>
+                                        <p class="font-bold text-lg">Mobile Penetration</p>
+                                    </div>
+                                </div>
+                                <div class="p-10 bg-gradient-to-r from-pink-50 via-red-50 to-orange-50 rounded-3xl text-center reveal stagger-3 hover-lift-premium border border-red-100">
+                                    <div class="w-20 h-20 bg-gradient-to-br from-accent-amber to-orange-400 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <i class="bi bi-lightbulb-fill text-white text-3xl"></i>
+                                    </div>
+                                    <p class="text-2xl font-heading font-bold text-primary-red leading-relaxed">
+                                        A massive opportunity to leverage existing technology for life-saving connections.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `,
+            setup() {
+                const problemPoints = [
+                    {
+                        title: "Fragmented Coordination",
+                        description: "Finding regular blood donors is a constant battle for families, often taking days or weeks to secure a single donation."
+                    },
+                    {
+                        title: "High Burden",
+                        description: "The financial and emotional toll on patients and caregivers is immense, with families often spending their life savings on treatment."
+                    },
+                    {
+                        title: "Information Gaps",
+                        description: "Lack of accessible, bite-sized information and community support leaves patients feeling isolated and uninformed."
+                    }
+                ];
+
+                return { problemPoints };
+            }
+        };
+
+        // Solution Section Component
+        const SolutionSection = {
+            template: `
+                <section id="solution" class="py-32 lg:py-40 bg-gradient-to-br from-neutral-dark via-gray-800 to-neutral-dark text-white relative overflow-hidden">
+                    <!-- Background pattern -->
+                    <div class="absolute inset-0 opacity-10">
+                        <div class="absolute inset-0 bg-gradient-to-r from-primary-red/20 to-trust-blue/20"></div>
+                    </div>
+                    
+                    <div class="container mx-auto px-6 lg:px-12 relative z-10">
+                        <div class="text-center mb-20 reveal">
+                            <div class="inline-block bg-gradient-to-r from-primary-red to-trust-blue text-white px-8 py-4 rounded-full text-sm font-bold mb-8 animate-glow">
+                                OUR BREAKTHROUGH SOLUTION
+                            </div>
+                            <h2 class="text-5xl md:text-7xl font-heading font-black mb-8 leading-tight">
+                                <span class="text-white">Our Solution:</span>
+                                <span class="block gradient-text-animated">BloodBridge Bot</span>
+                            </h2>
+                            <p class="text-2xl max-w-5xl mx-auto leading-relaxed text-gray-300 font-light">
+                                A <span class="font-bold text-support-teal">WhatsApp-first</span> (with SMS fallback) chatbot that bridges the gap between need and support, 
+                                directly on the phones people use every day.
+                            </p>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                            <div v-for="(step, index) in solutionSteps" :key="index" 
+                                 :class="'text-center p-10 glass-ultra rounded-3xl hover-lift-premium reveal stagger-' + (index + 1) + ' group'">
+                                <div class="relative mb-8">
+                                    <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-trust-blue to-blue-600 flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-glow-blue">
+                                        <i :class="step.icon" class="text-3xl text-white"></i>
+                                    </div>
+                                    <div class="absolute -top-2 -right-2 w-8 h-8 bg-accent-amber rounded-full flex items-center justify-center text-neutral-dark font-bold text-sm">
+                                        {{ index + 1 }}
+                                    </div>
+                                </div>
+                                <h3 class="text-2xl font-heading font-bold mb-6 text-white group-hover:text-support-teal transition-colors duration-300">
+                                    {{ step.title }}
+                                </h3>
+                                <p class="text-gray-300 leading-relaxed text-lg">{{ step.description }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-16 reveal">
+                            <button class="bg-gradient-to-r from-support-teal to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-12 py-6 text-xl font-bold rounded-2xl hover-lift-premium btn-magnetic inline-flex items-center space-x-3">
+                                <span>See It In Action</span>
+                                <i class="bi bi-play-fill text-2xl"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            `,
+            setup() {
+                const solutionSteps = [
+                    {
+                        icon: "bi bi-person-plus-fill",
+                        title: "Simple Onboarding",
+                        description: "Patients and donors text a simple keyword (\"JOIN\" or \"I'M IN\") to start. The bot handles the rest, collecting vital info through natural chat."
+                    },
+                    {
+                        icon: "bi bi-cpu-fill",
+                        title: "AI-Powered Matching",
+                        description: "Our bot predicts donor availability and auto-matches urgent patient requests to the nearest, most suitable donor."
+                    },
+                    {
+                        icon: "bi bi-calendar2-check-fill",
+                        title: "Automated Scheduling",
+                        description: "Once a match is confirmed via quick-reply, the bot sends Google Calendar invites and timely reminders to both parties."
+                    },
+                    {
+                        icon: "bi bi-chat-heart-fill",
+                        title: "Continuous Support",
+                        description: "Patients receive \"ThalQuickTips\" and emotional check-ins. Donors earn badges, gamifying the experience to encourage retention."
+                    }
+                ];
+
+                return { solutionSteps };
+            }
+        };
+
+        // Features Section Component
+        const FeaturesSection = {
+            template: `
+                <section id="features" class="py-32 lg:py-40 bg-gradient-to-br from-white via-soft-blue to-warm-gray">
+                    <div class="container mx-auto px-6 lg:px-12">
+                        <div class="text-center mb-20 reveal">
+                            <div class="inline-block bg-gradient-to-r from-trust-blue to-blue-600 text-white px-8 py-4 rounded-full text-sm font-bold mb-8">
+                                POWERFUL FEATURES
+                            </div>
+                            <h2 class="text-5xl md:text-7xl font-heading font-black text-trust-blue mb-8 leading-tight">
+                                Key <span class="text-primary-red">Features</span>
+                            </h2>
+                            <p class="text-2xl max-w-4xl mx-auto leading-relaxed text-gray-700 font-light">
+                                Designed for <span class="font-bold text-primary-red">impact</span>, built for <span class="font-bold text-trust-blue">accessibility</span>.
+                            </p>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                            <div v-for="(feature, index) in features" :key="index" 
+                                 :class="'p-10 glass-card rounded-3xl hover-lift-premium reveal stagger-' + (index + 1) + ' group border border-white/20'">
+                                <div class="flex items-center mb-8">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-primary-red to-red-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 mr-6">
+                                        <i :class="feature.icon" class="text-2xl text-white"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-heading font-bold text-neutral-dark group-hover:text-primary-red transition-colors duration-300">
+                                        {{ feature.title }}
+                                    </h3>
+                                </div>
+                                <p class="text-gray-600 leading-relaxed text-lg">{{ feature.description }}</p>
+                                <div class="mt-6 flex items-center text-primary-red font-semibold group-hover:text-trust-blue transition-colors duration-300">
+                                    <span class="mr-2">Learn more</span>
+                                    <i class="bi bi-arrow-right group-hover:translate-x-1 transition-transform duration-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `,
+            setup() {
+                const features = [
+                    {
+                        icon: "bi bi-whatsapp",
+                        title: "Zero-Install Interface",
+                        description: "Leverages WhatsApp and SMS, eliminating the need for users to download another app. It's care that meets you where you are."
+                    },
+                    {
+                        icon: "bi bi-graph-up-arrow",
+                        title: "Predictive Matching",
+                        description: "Lightweight AI models analyze past donations and availability to predict the optimal time for a donor to give, ensuring a ready supply."
+                    },
+                    {
+                        icon: "bi bi-award-fill",
+                        title: "Gamified Engagement",
+                        description: "Donors earn badges (\"5 Donations\", \"3 Friends Referred\") and unlock rewards, turning donation into a rewarding, shareable habit."
+                    },
+                    {
+                        icon: "bi bi-shield-check",
+                        title: "Patient Support System",
+                        description: "Delivers bite-sized \"ThalQuickTips\" on nutrition and prep, plus emotional check-ins that can escalate to human counselors."
+                    },
+                    {
+                        icon: "bi bi-diagram-3-fill",
+                        title: "Viral Growth Loop",
+                        description: "The bot encourages users to forward it to friends, organically spreading awareness and growing the donor network with every referral."
+                    },
+                    {
+                        icon: "bi bi-stack",
+                        title: "Robust Tech Stack",
+                        description: "Built on scalable, reliable technologies like Twilio, Node.js, and Google Cloud to ensure high uptime and data security."
+                    }
+                ];
+
+                return { features };
+            }
+        };
+
+        // Enhanced Pitch Deck Section Component
+        const PitchDeckSection = {
+            template: `
+                <section id="pitch-deck" class="py-32 lg:py-40 bg-gradient-to-br from-neutral-dark via-gray-900 to-black text-white relative overflow-hidden">
+                    <!-- Animated background elements -->
+                    <div class="absolute inset-0 opacity-20">
+                        <div v-for="i in 20" :key="i" 
+                             class="absolute w-2 h-2 bg-white rounded-full animate-pulse"
+                             :style="{
+                                 left: Math.random() * 100 + '%',
+                                 top: Math.random() * 100 + '%',
+                                 animationDelay: Math.random() * 3 + 's'
+                             }">
+                        </div>
+                    </div>
+                    
+                    <div class="container mx-auto px-6 lg:px-12 relative z-10">
+                        <div class="text-center mb-20 reveal">
+                            <div class="inline-block bg-gradient-to-r from-primary-red to-accent-amber text-white px-8 py-4 rounded-full text-sm font-bold mb-8 animate-glow">
+                                INVESTOR PITCH DECK
+                            </div>
+                            <h2 class="text-5xl md:text-7xl font-heading font-black mb-8 leading-tight">
+                                <span class="text-white">The Vision:</span>
+                                <span class="block gradient-text-animated">Our Pitch Deck</span>
+                            </h2>
+                            <p class="text-2xl max-w-5xl mx-auto leading-relaxed text-gray-300">
+                                Explore our journey, strategy, and vision for the future in this interactive 13-slide presentation.
+                            </p>
+                        </div>
+                        
+                        <div class="max-w-7xl mx-auto glass-ultra rounded-3xl shadow-premium overflow-hidden border border-white/10">
+                            <div class="relative aspect-video bg-gradient-to-br from-gray-900 via-neutral-dark to-black">
+                                <div class="absolute inset-0 flex items-center justify-center p-8 md:p-16">
+                                    <div class="text-center max-w-6xl w-full">
+                                        <!-- Slide content with smooth transitions -->
+                                        <transition name="slide" mode="out-in">
+                                            <div :key="currentSlide" class="min-h-96 flex items-center justify-center">
+                                                <div v-if="currentSlide === 0" class="text-center animate-scale-in">
+                                                    <h3 class="text-4xl md:text-6xl font-heading font-black text-white mb-6">
+                                                        ThalaLink: Empowering Care Gaps
+                                                    </h3>
+                                                    <h4 class="text-2xl md:text-3xl font-heading font-semibold text-support-teal mb-12">
+                                                        AI-Driven Blood Donation and Support Platform
+                                                    </h4>
+                                                    <div class="glass-ultra rounded-2xl p-8 max-w-2xl mx-auto">
+                                                        <p class="text-xl text-gray-300 mb-4">Presented by</p>
+                                                        <p class="text-2xl font-bold text-accent-amber">Linford Musiyambodza | July 2025</p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div v-else-if="currentSlide === 1" class="text-left max-w-5xl animate-slide-up">
+                                                    <h3 class="text-4xl md:text-5xl font-heading font-black text-primary-red mb-8">Problem Statement</h3>
+                                                    <p class="text-2xl mb-8 text-gray-300">Thalassemia patients in India:</p>
+                                                    <div class="grid gap-6">
+                                                        <div v-for="(problem, index) in problemList" :key="index" 
+                                                             class="flex items-center p-4 glass-ultra rounded-xl"
+                                                             :style="{ animationDelay: (index * 0.2) + 's' }">
+                                                            <div class="w-3 h-3 bg-trust-blue rounded-full mr-6 flex-shrink-0"></div>
+                                                            <span class="text-xl text-white">{{ problem }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div v-else-if="currentSlide === 2" class="text-left max-w-5xl animate-slide-up">
+                                                    <h3 class="text-4xl md:text-5xl font-heading font-black text-primary-red mb-8">Market Opportunity</h3>
+                                                    <div class="grid md:grid-cols-2 gap-8">
+                                                        <div v-for="(stat, index) in marketStats" :key="index" 
+                                                             class="p-6 glass-ultra rounded-2xl text-center">
+                                                            <div class="text-4xl font-black text-accent-amber mb-2">{{ stat.value }}</div>
+                                                            <div class="text-lg text-gray-300">{{ stat.label }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Continue with other slides using the provided content -->
+                                                <div v-else-if="currentSlide === 3" class="text-left max-w-5xl animate-slide-up">
+                                                    <h3 class="text-4xl md:text-5xl font-heading font-black text-primary-red mb-8">Our Solution</h3>
+                                                    <h4 class="text-2xl font-bold text-support-teal mb-6">BloodBridge Bot: WhatsApp-first chatbot with SMS fallback</h4>
+                                                    <div class="grid gap-4">
+                                                        <div v-for="feature in solutionFeatures" :key="feature" 
+                                                             class="flex items-center p-4 glass-ultra rounded-xl">
+                                                            <div class="w-3 h-3 bg-trust-blue rounded-full mr-6"></div>
+                                                            <span class="text-lg text-white">{{ feature }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div v-else-if="currentSlide === 11" class="text-center animate-scale-in">
+                                                    <h3 class="text-4xl md:text-5xl font-heading font-black text-primary-red mb-8">Investment Ask</h3>
+                                                    <div class="text-8xl md:text-9xl font-black text-accent-amber mb-8 animate-glow">$750,000</div>
+                                                    <p class="text-2xl text-gray-300 mb-8">USD</p>
+                                                    <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                                                        <div v-for="fund in fundUsage" :key="fund.label" 
+                                                             class="p-6 glass-ultra rounded-2xl">
+                                                            <div class="text-3xl font-bold text-white mb-2">{{ fund.percentage }}</div>
+                                                            <div class="text-lg text-gray-300">{{ fund.label }}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div v-else-if="currentSlide === 12" class="text-center animate-scale-in">
+                                                    <h3 class="text-4xl md:text-5xl font-heading font-black text-white mb-8">Thank You</h3>
+                                                    <h4 class="text-2xl md:text-3xl font-semibold text-support-teal mb-12">
+                                                        Join us in giving Thalassemia patients a lifeline
+                                                    </h4>
+                                                    <div class="glass-ultra rounded-2xl p-8 max-w-2xl mx-auto space-y-4">
+                                                        <a href="mailto:linford@thalalink.org" class="block text-xl text-accent-amber hover:text-white transition-colors">
+                                                            linford@thalalink.org
+                                                        </a>
+                                                        <a href="tel:+919876543210" class="block text-xl text-accent-amber hover:text-white transition-colors">
+                                                            +91 98765 43210
+                                                        </a>
+                                                        <a href="https://thala-link-1vsv.vercel.app/" class="block text-xl text-accent-amber hover:text-white transition-colors">
+                                                            www.thalalink.app
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Default slide template for remaining slides -->
+                                                <div v-else class="text-center animate-scale-in">
+                                                    <h3 class="text-4xl font-heading font-black text-primary-red mb-8">
+                                                        {{ slides[currentSlide].title }}
+                                                    </h3>
+                                                    <div v-html="slides[currentSlide].content" class="text-xl text-gray-300"></div>
+                                                </div>
+                                            </div>
+                                        </transition>
+                                    </div>
+                                </div>
+                                
+                                <!-- Enhanced Navigation -->
+                                <button 
+                                    @click="previousSlide"
+                                    class="absolute left-6 top-1/2 transform -translate-y-1/2 glass-ultra hover:bg-white/20 rounded-2xl p-4 shadow-lg transition-all duration-300 hover:scale-110"
+                                    :disabled="currentSlide === 0"
+                                    :class="{ 'opacity-50 cursor-not-allowed': currentSlide === 0 }"
+                                >
+                                    <i class="bi bi-chevron-left text-2xl text-white"></i>
+                                </button>
+                                
+                                <button 
+                                    @click="nextSlide"
+                                    class="absolute right-6 top-1/2 transform -translate-y-1/2 glass-ultra hover:bg-white/20 rounded-2xl p-4 shadow-lg transition-all duration-300 hover:scale-110"
+                                    :disabled="currentSlide === slides.length - 1"
+                                    :class="{ 'opacity-50 cursor-not-allowed': currentSlide === slides.length - 1 }"
+                                >
+                                    <i class="bi bi-chevron-right text-2xl text-white"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Enhanced slide indicators -->
+                            <div class="flex justify-center items-center space-x-3 p-8 bg-gradient-to-r from-neutral-dark to-gray-900">
+                                <button 
+                                    v-for="(slide, index) in slides" 
+                                    :key="index"
+                                    @click="currentSlide = index"
+                                    :class="[
+                                        'h-3 rounded-full transition-all duration-300 hover:scale-125',
+                                        currentSlide === index 
+                                            ? 'w-12 bg-gradient-to-r from-primary-red to-trust-blue' 
+                                            : 'w-3 bg-gray-600 hover:bg-gray-400'
+                                    ]"
+                                    :aria-label="'Go to slide ' + (index + 1)"
+                                ></button>
+                                
+                                <div class="ml-6 text-white font-mono text-sm">
+                                    {{ currentSlide + 1 }} / {{ slides.length }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `,
+            setup() {
+                const currentSlide = ref(0);
+                
+                const problemList = [
+                    "Struggle to find regular blood donors",
+                    "Face fragmented care coordination", 
+                    "Bear high financial and emotional burden",
+                    "Lack awareness and community support"
+                ];
+                
+                const marketStats = [
+                    { value: "100,000+", label: "Thalassemia patients in India today" },
+                    { value: "2M+", label: "Blood donors nationwide" },
+                    { value: "$5B+", label: "National healthcare spend annually" },
+                    { value: "80%+", label: "Mobile penetration rate" }
+                ];
+                
+                const solutionFeatures = [
+                    "Instant donor-patient matching in real time",
+                    "AI-powered donor availability predictions",
+                    "Automated scheduling, reminders, and calendar invites",
+                    "Bite-sized education and emotional check-ins",
+                    "Gamified rewards and viral referral loops"
+                ];
+                
+                const fundUsage = [
+                    { percentage: "40%", label: "Product Development and Scaling" },
+                    { percentage: "25%", label: "Marketing and Partnerships" },
+                    { percentage: "20%", label: "Operations and Data Security" },
+                    { percentage: "15%", label: "Hiring Key Talent" }
+                ];
+
+                const slides = [
+                    { title: "Title", content: "" },
+                    { title: "Problem", content: "" },
+                    { title: "Market", content: "" },
+                    { title: "Solution", content: "" },
+                    { title: "Key Features", content: "<p class='text-lg'>1. Onboarding in under 60 seconds via chat<br>2. Rule-based + AI-driven matching engine<br>3. Two-step confirmation with quick-reply buttons<br>4. Calendar integration and multi-channel reminders<br>5. Daily wellness prompts and weekly care tips<br>6. Donor badges, points, and referral tracking</p>" },
+                    { title: "Technology Stack", content: "<div class='grid md:grid-cols-2 gap-4 text-left font-mono text-lg'><div><p><strong>Chat Interface:</strong> Twilio Conversations</p><p><strong>Bot Engine:</strong> Node.js with Botpress</p><p><strong>ML Service:</strong> Python FastAPI (XGBoost)</p><p><strong>Database:</strong> PostgreSQL (JSONB)</p></div><div><p><strong>Hosting:</strong> Docker on Google Cloud Run</p><p><strong>CI/CD:</strong> GitHub Actions</p><p><strong>Secrets:</strong> GCP Secret Manager</p><p><strong>Auth:</strong> Firebase Auth (JWT)</p></div></div>" },
+                    { title: "Business Model", content: "<div class='text-left space-y-4'><div class='p-4 glass-ultra rounded-xl'><h4 class='text-xl font-bold text-accent-amber mb-2'>Subscription for Hospitals and Clinics</h4><p>Monthly tiered plans based on patient volume</p><p>Priority support and custom reporting</p></div><div class='p-4 glass-ultra rounded-xl'><h4 class='text-xl font-bold text-support-teal mb-2'>Transaction fees per successful match for NGOs</h4></div><div class='p-4 glass-ultra rounded-xl'><h4 class='text-xl font-bold text-primary-red mb-2'>Branded sponsorships for gamification badges</h4></div></div>" },
+                    { title: "Go-To-Market Strategy", content: "<div class='text-left space-y-3'><div class='flex items-center'><div class='w-8 h-8 bg-primary-red rounded-full flex items-center justify-center text-white font-bold mr-4'>1</div><p>Partner with 2 leading hospitals in Delhi</p></div><div class='flex items-center'><div class='w-8 h-8 bg-trust-blue rounded-full flex items-center justify-center text-white font-bold mr-4'>2</div><p>Integrate with e-RaktKosh and Blood Warriors APIs</p></div><div class='flex items-center'><div class='w-8 h-8 bg-support-teal rounded-full flex items-center justify-center text-white font-bold mr-4'>3</div><p>Launch awareness campaign via WhatsApp broadcasts</p></div><div class='flex items-center'><div class='w-8 h-8 bg-accent-amber rounded-full flex items-center justify-center text-neutral-dark font-bold mr-4'>4</div><p>Expand to 5 additional states in India</p></div></div>" },
+                    { title: "Traction & Milestones", content: "<div class='grid md:grid-cols-2 gap-6'><div class='p-4 glass-ultra rounded-xl text-center'><div class='text-3xl font-bold text-accent-amber mb-2'>10 days</div><div>Prototype built with core chat flows</div></div><div class='p-4 glass-ultra rounded-xl text-center'><div class='text-3xl font-bold text-support-teal mb-2'>150</div><div>Patients and donors onboarded in pilot</div></div><div class='p-4 glass-ultra rounded-xl text-center'><div class='text-3xl font-bold text-primary-red mb-2'>80%</div><div>Match confirmation rate within 4 hours</div></div><div class='p-4 glass-ultra rounded-xl text-center'><div class='text-3xl font-bold text-trust-blue mb-2'>30%</div><div>Weekly active donors up through badges</div></div></div>" },
+                    { title: "Roadmap (Next 12 Months)", content: "<div class='text-left space-y-4'><div class='p-4 glass-ultra rounded-xl'><strong class='text-accent-amber'>M1–M2:</strong> ML model refinement and accuracy tuning</div><div class='p-4 glass-ultra rounded-xl'><strong class='text-support-teal'>M3–M4:</strong> Gamification v1 and referral leaderboard</div><div class='p-4 glass-ultra rounded-xl'><strong class='text-primary-red'>M5–M6:</strong> Voice call support for low-literacy users</div><div class='p-4 glass-ultra rounded-xl'><strong class='text-trust-blue'>M7–M9:</strong> Multilingual support and regional dialects</div><div class='p-4 glass-ultra rounded-xl'><strong class='text-white'>M10–M12:</strong> Nationwide scale-up and API licensing</div></div>" },
+                    { title: "The Team", content: "<div class='grid md:grid-cols-2 gap-8'><div class='p-6 glass-ultra rounded-2xl text-center'><div class='w-20 h-20 bg-gradient-to-br from-primary-red to-red-600 rounded-full mx-auto mb-4 flex items-center justify-center'><i class='bi bi-person-fill text-3xl text-white'></i></div><h4 class='text-xl font-bold text-accent-amber mb-2'>Linford Musiyambodza</h4><p class='text-gray-300'>CEO - Visionary leader with a passion for leveraging technology for social good</p></div><div class='p-6 glass-ultra rounded-2xl text-center'><div class='w-20 h-20 bg-gradient-to-br from-trust-blue to-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center'><i class='bi bi-code-slash text-3xl text-white'></i></div><h4 class='text-xl font-bold text-support-teal mb-2'>William King</h4><p class='text-gray-300'>CTO - 10 years in software, specializing in scalable backends and system architecture</p></div></div>" },
+                    { title: "Investment Ask", content: "" },
+                    { title: "Thank You", content: "" }
+                ];
+
+                const nextSlide = () => {
+                    if (currentSlide.value < slides.length - 1) {
+                        currentSlide.value++;
+                    }
+                };
+
+                const previousSlide = () => {
+                    if (currentSlide.value > 0) {
+                        currentSlide.value--;
+                    }
+                };
+
+                return {
+                    currentSlide,
+                    slides,
+                    problemList,
+                    marketStats,
+                    solutionFeatures,
+                    fundUsage,
+                    nextSlide,
+                    previousSlide
+                };
+            }
+        };
+
+        // Team Section Component
+        const TeamSection = {
+            template: `
+                <section id="team" class="py-32 lg:py-40 bg-gradient-to-br from-warm-gray via-white to-soft-blue">
+                    <div class="container mx-auto px-6 lg:px-12">
+                        <div class="text-center mb-20 reveal">
+                            <div class="inline-block bg-gradient-to-r from-trust-blue to-blue-600 text-white px-8 py-4 rounded-full text-sm font-bold mb-8">
+                                LEADERSHIP TEAM
+                            </div>
+                            <h2 class="text-5xl md:text-7xl font-heading font-black text-trust-blue mb-8 leading-tight">
+                                Meet the <span class="text-primary-red">Team</span>
+                            </h2>
+                            <p class="text-2xl max-w-4xl mx-auto leading-relaxed text-gray-700 font-light">
+                                The passionate minds dedicated to bridging the gap in Thalassemia care.
+                            </p>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-12 max-w-4xl mx-auto">
+                            <div v-for="(member, index) in teamMembers" :key="index" 
+                                 :class="'text-center p-12 glass-card rounded-3xl hover-lift-premium reveal stagger-' + (index + 1) + ' group border border-white/20'">
+                                <div class="relative mb-8">
+                                    <img 
+                                        :src="member.image" 
+                                        :alt="'Photo of ' + member.name"
+                                        class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-large group-hover:scale-110 transition-all duration-300"
+                                        loading="lazy"
+                                    >
+                                    <div class="absolute -bottom-2 -right-2 w-12 h-12 bg-gradient-to-br from-primary-red to-red-600 rounded-full flex items-center justify-center">
+                                        <i :class="member.icon" class="text-white text-xl"></i>
+                                    </div>
+                                </div>
+                                <h3 class="text-3xl font-heading font-black mb-3 text-neutral-dark group-hover:text-primary-red transition-colors duration-300">
+                                    {{ member.name }}
+                                </h3>
+                                <h4 class="text-xl font-bold text-trust-blue mb-4">{{ member.title }}</h4>
+                                <p class="text-gray-600 leading-relaxed text-lg">{{ member.description }}</p>
+                                <div class="mt-6 flex justify-center space-x-4">
+                                    <a href="#" class="w-10 h-10 bg-gradient-to-br from-trust-blue to-blue-600 rounded-lg flex items-center justify-center text-white hover:scale-110 transition-all duration-300">
+                                        <i class="bi bi-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="w-10 h-10 bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg flex items-center justify-center text-white hover:scale-110 transition-all duration-300">
+                                        <i class="bi bi-twitter-x"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `,
+            setup() {
+                const teamMembers = [
+                    {
+                        name: "Linford Musiyambodza",
+                        title: "CEO & Founder",
+                        description: "Visionary leader with a passion for leveraging technology for social good. Experienced in building scalable healthcare solutions and driving social impact initiatives.",
+                        image: "https://i.pravatar.cc/150?u=linford",
+                        icon: "bi bi-star-fill"
+                    },
+                    {
+                        name: "William King",
+                        title: "Chief Technology Officer",
+                        description: "10 years in software development, specializing in scalable backends and system architecture. Expert in AI/ML implementations and healthcare technology platforms.",
+                        image: "https://i.pravatar.cc/150?u=william",
+                        icon: "bi bi-code-slash"
+                    }
+                ];
+
+                return { teamMembers };
+            }
+        };
+
+        // FAQ Section Component
+        const FAQSection = {
+            template: `
+                <section id="faq" class="py-32 lg:py-40 bg-gradient-to-br from-neutral-dark via-gray-800 to-neutral-dark text-white">
+                    <div class="container mx-auto px-6 lg:px-12">
+                        <div class="text-center mb-20 reveal">
+                            <div class="inline-block bg-gradient-to-r from-primary-red to-accent-amber text-white px-8 py-4 rounded-full text-sm font-bold mb-8 animate-glow">
+                                FREQUENTLY ASKED QUESTIONS
+                            </div>
+                            <h2 class="text-5xl md:text-7xl font-heading font-black mb-8 leading-tight">
+                                <span class="text-primary-red">Addressing</span> 
+                                <span class="text-white">Key Questions</span>
+                            </h2>
+                            <p class="text-2xl max-w-4xl mx-auto leading-relaxed text-gray-300 font-light">
+                                We believe in transparency. Here's how we're tackling potential challenges.
+                            </p>
+                        </div>
+                        
+                        <div class="max-w-5xl mx-auto space-y-6">
+                            <div v-for="(faq, index) in faqs" :key="index" 
+                                 :class="'glass-ultra rounded-3xl overflow-hidden reveal stagger-' + (index + 1) + ' border border-white/10'">
+                                <button 
+                                    @click="toggleFAQ(index)"
+                                    class="w-full px-10 py-8 text-left font-heading font-bold text-xl hover:bg-white/5 transition-all duration-300 flex justify-between items-center group"
+                                    :aria-expanded="faq.open"
+                                >
+                                    <span class="group-hover:text-support-teal transition-colors duration-300">{{ faq.question }}</span>
+                                    <i :class="faq.open ? 'bi-chevron-up' : 'bi-chevron-down'" 
+                                       class="text-2xl text-support-teal group-hover:scale-125 transition-all duration-300"></i>
+                                </button>
+                                <transition name="accordion">
+                                    <div v-show="faq.open" class="px-10 pb-8">
+                                        <div class="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-6"></div>
+                                        <p class="text-gray-300 leading-relaxed text-lg">{{ faq.answer }}</p>
+                                    </div>
+                                </transition>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `,
+            setup() {
+                const faqs = ref([
+                    {
+                        question: "How do you handle data privacy and consent?",
+                        answer: "Data privacy is paramount. All chat logs and user data are encrypted both in transit and at rest in our secure PostgreSQL database. We enforce strict consent protocols during onboarding, ensuring users explicitly opt-in to chat-based interactions in compliance with local regulations like India's DPDP.",
+                        open: true
+                    },
+                    {
+                        question: "What if WhatsApp Business API approval takes too long?",
+                        answer: "We've mitigated this risk by building a robust SMS fallback channel from day one. Our system, powered by Twilio Conversations, can seamlessly manage interactions across both WhatsApp and SMS, ensuring uninterrupted service and reach, regardless of API approval timelines.",
+                        open: false
+                    },
+                    {
+                        question: "How will the AI matching work without historical data (cold-start problem)?",
+                        answer: "We are launching with a powerful rule-based matching engine that pairs users based on blood type, location, and self-reported availability. As we gather more data from interactions, we will progressively roll out our FastAPI-based machine learning model to enhance prediction accuracy and optimize matches.",
+                        open: false
+                    }
+                ]);
+
+                const toggleFAQ = (index) => {
+                    faqs.value[index].open = !faqs.value[index].open;
+                };
+
+                return { faqs, toggleFAQ };
+            }
+        };
+
+        // Footer Component
+        const FooterComponent = {
+            template: `
+                <footer id="contact" class="bg-gradient-to-br from-neutral-dark via-gray-900 to-black text-white py-32 relative overflow-hidden">
+                    <!-- Background animation -->
+                    <div class="absolute inset-0 opacity-10">
+                        <div class="absolute inset-0 bg-gradient-to-r from-primary-red/20 via-trust-blue/20 to-support-teal/20 animate-pulse-slow"></div>
+                    </div>
+                    
+                    <div class="container mx-auto px-6 lg:px-12 text-center relative z-10">
+                        <div class="reveal">
+                            <div class="inline-block bg-gradient-to-r from-support-teal to-teal-600 text-white px-8 py-4 rounded-full text-sm font-bold mb-12 animate-glow">
+                                JOIN OUR MISSION
+                            </div>
+                            <h2 class="text-5xl md:text-7xl font-heading font-black mb-8 leading-tight">
+                                <span class="text-white">Join Us on</span>
+                                <span class="block gradient-text-animated">Our Mission</span>
+                            </h2>
+                            <p class="text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed font-light">
+                                Give Thalassemia patients a lifeline. Partner with us, invest in our vision, or join our donor community.
+                            </p>
+                            
+                            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+                                <a 
+                                    href="mailto:linford@thalalink.org"
+                                    class="bg-gradient-to-r from-trust-blue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-12 py-6 text-xl font-bold rounded-2xl hover-lift-premium btn-magnetic inline-flex items-center space-x-3"
+                                >
+                                    <i class="bi bi-envelope-fill text-2xl"></i>
+                                    <span>Contact Us Today</span>
+                                </a>
+                                <a 
+                                    href="https://thala-link-1vsv.vercel.app/"
+                                    class="glass-ultra border-2 border-white/30 text-white hover:bg-white/20 px-12 py-6 text-xl font-bold rounded-2xl hover-lift-premium transition-all duration-300 inline-flex items-center space-x-3"
+                                >
+                                    <i class="bi bi-globe text-2xl"></i>
+                                    <span>Visit Our Platform</span>
+                                </a>
+                            </div>
+                            
+                            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                                <div class="p-6 glass-ultra rounded-2xl hover-lift-premium">
+                                    <i class="bi bi-envelope-fill text-3xl text-support-teal mb-4"></i>
+                                    <a href="mailto:linford@thalalink.org" class="block text-xl text-accent-amber hover:text-white transition-colors">
+                                        linford@thalalink.org
+                                    </a>
+                                </div>
+                                <div class="p-6 glass-ultra rounded-2xl hover-lift-premium">
+                                    <i class="bi bi-telephone-fill text-3xl text-support-teal mb-4"></i>
+                                    <a href="tel:+919876543210" class="block text-xl text-accent-amber hover:text-white transition-colors">
+                                        +91 98765 43210
+                                    </a>
+                                </div>
+                                <div class="p-6 glass-ultra rounded-2xl hover-lift-premium">
+                                    <i class="bi bi-globe text-3xl text-support-teal mb-4"></i>
+                                    <a href="https://thala-link-1vsv.vercel.app/" class="block text-xl text-accent-amber hover:text-white transition-colors">
+                                        www.thalalink.app
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-center space-x-8 mb-12">
+                                <a href="#" class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center text-white hover:scale-110 transition-all duration-300 text-2xl">
+                                    <i class="bi bi-twitter-x"></i>
+                                </a>
+                                <a href="#" class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl flex items-center justify-center text-white hover:scale-110 transition-all duration-300 text-2xl">
+                                    <i class="bi bi-linkedin"></i>
+                                </a>
+                                <a href="#" class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center text-white hover:scale-110 transition-all duration-300 text-2xl">
+                                    <i class="bi bi-whatsapp"></i>
+                                </a>
+                            </div>
+                            
+                            <div class="border-t border-white/20 pt-12">
+                                <p class="text-gray-400 text-lg">
+                                    &copy; 2025 ThalaLink. All Rights Reserved. | 
+                                    <a href="#" class="text-support-teal hover:text-white transition-colors mx-2">Privacy Policy</a> | 
+                                    <a href="#" class="text-support-teal hover:text-white transition-colors mx-2">Terms of Service</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            `
+        };
+
+        // Main App
+        const app = createApp({
+            components: {
+                'navbar-component': NavbarComponent,
+                'hero-component': HeroComponent,
+                'problem-section': ProblemSection,
+                'solution-section': SolutionSection,
+                'features-section': FeaturesSection,
+                'pitch-deck-section': PitchDeckSection,
+                'team-section': TeamSection,
+                'faq-section': FAQSection,
+                'footer-component': FooterComponent
+            },
+            setup() {
+                const isScrolled = ref(false);
+
+                // Scroll detection with throttling
+                let ticking = false;
+                const handleScroll = () => {
+                    if (!ticking) {
+                        requestAnimationFrame(() => {
+                            isScrolled.value = window.scrollY > 50;
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                };
+
+                // Enhanced scroll reveal functionality
+                const observeElements = () => {
+                    const elements = document.querySelectorAll('.reveal');
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('active');
+                            }
+                        });
+                    }, { 
+                        threshold: 0.1,
+                        rootMargin: '50px'
+                    });
+
+                    elements.forEach(el => observer.observe(el));
+                };
+
+                // Smooth navigation with offset for fixed header
+                const scrollToSection = (sectionId) => {
+                    const element = document.getElementById(sectionId);
+                    if (element) {
+                        const offsetTop = element.offsetTop - 80; // Account for fixed header
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                };
+
+                onMounted(() => {
+                    window.addEventListener('scroll', handleScroll, { passive: true });
+                    nextTick(() => {
+                        observeElements();
+                    });
+                });
+
+                return {
+                    isScrolled,
+                    scrollToSection
+                };
+            }
+        });
+
+        // CSS transitions for Vue
+        const style = document.createElement('style');
+        style.textContent = `
+            .slide-enter-active, .slide-leave-active {
+                transition: all 0.5s ease-in-out;
+            }
+            .slide-enter-from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            .slide-leave-to {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            
+            .accordion-enter-active, .accordion-leave-active {
+                transition: all 0.3s ease;
+            }
+            .accordion-enter-from, .accordion-leave-to {
+                opacity: 0;
+                max-height: 0;
+            }
+        `;
+        document.head.appendChild(style);
+
+        app.mount('#app');
+    </script>
+</body>
+</html>
